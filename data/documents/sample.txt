@@ -1,0 +1,9 @@
+RAG stands for Retrieval Augmented Generation.
+
+It is a technique that combines a vector database with a large language model.
+
+Documents are converted into embeddings and stored in a vector database.
+
+When a user asks a question, relevant document chunks are retrieved and passed to the LLM.
+
+This helps the LLM give accurate, document-based answers instead of hallucinating.
