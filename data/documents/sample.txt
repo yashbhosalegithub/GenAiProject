@@ -1,0 +1,303 @@
+RAG stands for Retrieval Augmented Generation.
+
+RAG is a technique that combines information retrieval with a large language model (LLM). It allows an LLM to answer questions using information retrieved from external documents.
+
+Documents are loaded, split into smaller chunks, converted into numerical embeddings, and stored in a vector database.
+
+When a user asks a question, the question is converted into an embedding. The system searches the vector database and retrieves the most relevant document chunks. These chunks are then provided to the LLM as context.
+
+This helps the LLM generate accurate, document-based answers and reduces the possibility of hallucination.
+
+RAG is commonly used for question answering, document search, customer support, enterprise knowledge bases, and domain-specific AI applications.
+
+--------------------------------------------------
+RAG PIPELINE
+--------------------------------------------------
+
+The main steps in a RAG pipeline are:
+
+1. Document Loading
+2. Text Splitting
+3. Embedding Generation
+4. Vector Storage
+5. Similarity Search
+6. Context Retrieval
+7. Answer Generation
+
+The complete pipeline used in this project is:
+
+Document
+    ↓
+Text Splitting
+    ↓
+Embedding Generation
+    ↓
+FAISS Vector Store
+    ↓
+User Question
+    ↓
+Question Embedding
+    ↓
+Similarity Search
+    ↓
+Top 3 Relevant Chunks
+    ↓
+Retrieved Context
+    ↓
+Llama 2
+    ↓
+Final Answer
+
+
+--------------------------------------------------
+DOCUMENT LOADING
+--------------------------------------------------
+
+The first step in the RAG pipeline is loading the source documents.
+
+The documents contain the knowledge that the system should use when answering user questions.
+
+In this project, documents are stored inside the data/documents directory.
+
+The document content is loaded using LangChain document loaders.
+
+
+--------------------------------------------------
+TEXT SPLITTING
+--------------------------------------------------
+
+Large documents are divided into smaller chunks before creating embeddings.
+
+Chunking makes retrieval more efficient because the system can retrieve only the relevant portions of a document instead of sending the entire document to the LLM.
+
+Chunk size is an important factor in RAG.
+
+Very small chunks may lose important context, while very large chunks may contain unnecessary information.
+
+A good chunking strategy should preserve the meaning and context of the original document.
+
+
+--------------------------------------------------
+EMBEDDINGS
+--------------------------------------------------
+
+Embeddings convert text into numerical vector representations.
+
+The embedding model used in this project is:
+
+all-MiniLM-L6-v2
+
+The model is provided through Hugging Face sentence-transformer models.
+
+The embedding model converts both documents and user questions into vectors that capture their semantic meaning.
+
+Texts with similar meanings are represented by vectors that are closer to each other in the embedding space.
+
+
+--------------------------------------------------
+FAISS VECTOR DATABASE
+--------------------------------------------------
+
+FAISS is used in this project for efficient similarity search.
+
+The document embeddings are stored in a FAISS vector index.
+
+When a user asks a question, the question is converted into an embedding and compared with the stored document embeddings.
+
+FAISS then identifies the most similar document vectors.
+
+This allows the system to retrieve relevant information efficiently.
+
+
+--------------------------------------------------
+RETRIEVAL
+--------------------------------------------------
+
+The retriever searches the FAISS vector store for information relevant to the user's question.
+
+The retriever in this project is configured to return the top 3 most relevant document chunks.
+
+The top-k value determines how many chunks are retrieved.
+
+In this project:
+
+top-k = 3
+
+The retrieved chunks are combined to create the context that will be provided to the language model.
+
+
+--------------------------------------------------
+GENERATION
+--------------------------------------------------
+
+After retrieving the relevant document chunks, the system passes the retrieved information and the user's question to the language model.
+
+The language model used in this project is Llama 2.
+
+The LLM uses the retrieved context to generate a natural-language answer.
+
+The purpose of retrieval is to provide the LLM with relevant external information before generating the response.
+
+
+--------------------------------------------------
+TWO MAJOR STAGES OF RAG
+--------------------------------------------------
+
+RAG has two major stages:
+
+1. Retrieval
+2. Generation
+
+During the retrieval stage, the system searches the vector database and finds the most relevant information.
+
+During the generation stage, the language model uses the retrieved information as context and generates the final response.
+
+
+--------------------------------------------------
+SEMANTIC SEARCH
+--------------------------------------------------
+
+RAG is different from traditional keyword search because embeddings allow the system to retrieve information based on semantic similarity.
+
+For example, if a document contains:
+
+"RAG combines retrieval with language generation."
+
+A user could ask:
+
+"How does RAG combine external knowledge with an LLM?"
+
+The exact words may be different, but the semantic meaning is similar. The embedding-based search can therefore retrieve the relevant document chunk.
+
+
+--------------------------------------------------
+EXAMPLE
+--------------------------------------------------
+
+Suppose a company document contains information about its employees and technologies.
+
+A user asks:
+
+"What technologies are used in the project?"
+
+The system first converts the question into an embedding.
+
+FAISS searches the document embeddings and retrieves the most relevant chunks.
+
+The retrieved information is provided to Llama 2 as context.
+
+Llama 2 then generates an answer based on the retrieved information.
+
+
+--------------------------------------------------
+RAG VS FINE-TUNING
+--------------------------------------------------
+
+RAG is different from fine-tuning.
+
+With RAG, the source documents can be updated without retraining the language model.
+
+If new documents are added, they can be converted into embeddings and added to the vector store.
+
+Fine-tuning changes the model's learned parameters, while RAG provides external information to the model at query time.
+
+RAG is especially useful when information is private, domain-specific, or frequently updated.
+
+
+--------------------------------------------------
+ADVANTAGES OF RAG
+--------------------------------------------------
+
+RAG provides several advantages:
+
+1. Uses external knowledge.
+2. Reduces hallucination.
+3. Can work with private documents.
+4. Documents can be updated without retraining the LLM.
+5. Provides context-specific answers.
+6. Useful for domain-specific question answering.
+7. Can improve the relevance of generated answers.
+
+
+--------------------------------------------------
+LIMITATIONS OF RAG
+--------------------------------------------------
+
+A basic RAG system also has limitations.
+
+Incorrect or irrelevant retrieval can result in an incorrect answer.
+
+Poor chunking can cause important context to be lost.
+
+A poor embedding model may result in low-quality retrieval.
+
+Retrieving too many chunks can introduce irrelevant information into the context.
+
+The quality of a RAG system can be improved using better chunking strategies, better embedding models, reranking, metadata filtering, and optimized retrieval parameters.
+
+
+--------------------------------------------------
+TOP-K RETRIEVAL
+--------------------------------------------------
+
+The top-k value controls how many relevant chunks are retrieved from the vector database.
+
+In this project:
+
+top-k = 3
+
+This means the retriever returns the three most relevant document chunks for each user query.
+
+A smaller k may provide more focused context, while a larger k may provide more information but can also introduce irrelevant content.
+
+
+--------------------------------------------------
+RAG ARCHITECTURE
+--------------------------------------------------
+
+The architecture of this project is:
+
+User Question
+      ↓
+Question Embedding
+      ↓
+FAISS Similarity Search
+      ↓
+Top 3 Relevant Chunks
+      ↓
+Retrieved Context
+      ↓
+Llama 2
+      ↓
+Final Answer
+
+
+--------------------------------------------------
+PROJECT TECHNOLOGIES
+--------------------------------------------------
+
+The main technologies used in this project are:
+
+Python
+LangChain
+FAISS
+Hugging Face
+all-MiniLM-L6-v2
+Llama 2
+Streamlit
+
+
+--------------------------------------------------
+REAL-WORLD APPLICATIONS
+--------------------------------------------------
+
+RAG can be used in many real-world applications, including:
+
+1. Enterprise knowledge assistants
+2. Customer support chatbots
+3. Document question-answering systems
+4. Research assistants
+5. Legal document search
+6. Healthcare information systems
+7. Internal company knowledge bases
+8. Technical documentation assistants
