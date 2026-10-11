@@ -11,3 +11,4 @@ langchain-ollama
 sentence-transformers
 torch
 torchvision
+langchain-openai

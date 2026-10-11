@@ -1,9 +1,11 @@
+
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_classic.chains import RetrievalQA
-from langchain_ollama import OllamaLLM
+from langchain_openai import ChatOpenAI
 
 VECTORSTORE_PATH = "vectorstore"
+
 
 def load_qa_chain():
     embeddings = HuggingFaceEmbeddings(
@@ -16,9 +18,11 @@ def load_qa_chain():
         allow_dangerous_deserialization=True
     )
 
-    retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+    retriever = vectorstore.as_retriever(
+        search_kwargs={"k": 3}
+    )
 
-    llm = OllamaLLM(model="llama2")
+    llm = ChatOpenAI(model="gpt-4o-mini", temperature=0)
 
     qa_chain = RetrievalQA.from_chain_type(
         llm=llm,
